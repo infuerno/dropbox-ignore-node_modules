@@ -15,16 +15,16 @@ const fs = require('fs');
 
     // shell command
     const platform = process.platform;
-    const command = (
+    const [command, options] = (
       platform === "win32"
-        ? `Set-Content -Path '${modulesPath}' -Stream com.dropbox.ignored -Value 1`
+        ? [`Set-Content -Path '${modulesPath}' -Stream com.dropbox.ignored -Value 1`, {'shell':'powershell.exe'}]
         : platform === "darwin"
-          ? `xattr -w com.dropbox.ignored 1 ${modulesPath.replace(" ", "\\ ")}`
-          : `attr -s com.dropbox.ignored -V 1 ${modulesPath}`
+          ? [`xattr -w com.dropbox.ignored 1 ${modulesPath.replace(" ", "\\ ")}`]
+          : [`attr -s com.dropbox.ignored -V 1 ${modulesPath}`]
     );
 
     // execute shell command
-    exec(command, (error, stdout, stderr) => {
+    exec(command, options, (error, stdout, stderr) => {
       if (error) {
         throw error;
       }
